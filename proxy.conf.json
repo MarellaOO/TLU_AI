@@ -1,0 +1,7 @@
+{
+  "/api": {
+    "target": "https://services.err.ee",
+    "secure": true,
+    "changeOrigin": true
+  }
+}
