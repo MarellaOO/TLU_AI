@@ -5,7 +5,14 @@ import type { FrontPageItem } from '../models/api.models';
   selector: 'app-card',
   standalone: true,
   template: `
-    <a [href]="item.canonicalUrl" target="_blank" rel="noopener" class="card">
+    <a
+      role="link"
+      [href]="safeUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      (click)="openInNewTab($event)"
+      class="card"
+    >
       <div class="card__img-wrap">
         <img
           [src]="imageUrl"
@@ -59,6 +66,24 @@ import type { FrontPageItem } from '../models/api.models';
 })
 export class CardComponent {
   @Input({ required: true }) item!: FrontPageItem;
+
+  /** Ainult https/http URLid, et vältida vale lingiga navigeerimist. */
+  get safeUrl(): string {
+    const url = this.item?.canonicalUrl ?? '';
+    if (url.startsWith('https://') || url.startsWith('http://')) return url;
+    return '#';
+  }
+
+  /** Avab lingi uues vaheaknas; praegune vaheaken jääb meie rakenduse peale (ei lähe mustaks). */
+  openInNewTab(event: MouseEvent): void {
+    const url = this.safeUrl;
+    if (url === '#') return;
+    // Ctrl+klikk / Cmd+klikk / keskmine nupp → lasta brauseril ise uues tabis avada
+    if (event.ctrlKey || event.metaKey || event.button !== 0) return;
+    event.preventDefault();
+    event.stopPropagation();
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
 
   get imageUrl(): string {
     const photos = this.item.verticalPhotos;
