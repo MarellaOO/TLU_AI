@@ -23,4 +23,17 @@ export class JupiterApiService {
       })
     );
   }
+
+  /** Esilehe bänner (esimene sektsioon, kus manual.banner === true). */
+  getFrontPageBanner(): Observable<FrontPageSection | null> {
+    return this.http.get<CategoryApiResponse>(API_URL).pipe(
+      map((res) => {
+        const sections = res?.data?.category?.frontPage ?? [];
+        const banner = sections.find(
+          (s) => s.manual?.banner === true && Array.isArray(s.data) && s.data.length > 0
+        );
+        return banner ?? null;
+      })
+    );
+  }
 }

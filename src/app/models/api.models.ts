@@ -17,8 +17,10 @@ export interface FrontPageItem {
   id: number;
   heading: string;
   subHeading?: string;
+  lead?: string;
   canonicalUrl: string;
   verticalPhotos: Photo[];
+  photos?: Photo[];
 }
 
 export interface FrontPageSection {
